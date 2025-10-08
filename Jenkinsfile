@@ -46,8 +46,6 @@ pipeline {
                         def taskDefJson = sh(script: "aws ecs describe-task-definition --task-definition ${params.TASK_FAMILY} --region ${params.AWS_REGION}", returnStdout: true).trim()
 
                         echo "2. Creando una nueva revisión de la Task Definition..."
-                        // --- ESTA ES LA PARTE CORREGIDA ---
-                        // Se crea un nuevo JSON modificando solo lo necesario y eliminando campos que AWS no acepta
                         def newTaskDefPayload = sh(
                             script: """
                                 echo '${taskDefJson}' | jq '.taskDefinition | .containerDefinitions[0].image = "${env.ECR_URL}:latest" | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)'
@@ -68,6 +66,4 @@ pipeline {
         }
     }
 }
-        }
-    }
-}
+// Fin del archivo Jenkinsfile
